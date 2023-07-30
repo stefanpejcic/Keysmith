@@ -1,0 +1,90 @@
+<!-- dashboard.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Specific content for the dashboard page -->
+            <h3>Dashboard</h3>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card"  style="background: aliceblue;">
+                        <div class="card-body">
+<h1 class="display-4">Hello, {{ current_username }}!</h1>
+  <p class="lead">All great things have to start somewhere...</p>
+  <hr class="my-4">
+  <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+  <p class="lead">
+    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+  </p>
+
+                       </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Websites</h5>
+                            <p class="card-text">Install WordPress with a single click.</p>
+                            <a href="/website" class="btn btn-primary">Go to Websites</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Domain Management</h5>
+                            <p class="card-text">Manage your domains and DNS settings.</p>
+                            <a href="/domains" class="btn btn-primary">Go to Domains</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">File Manager</h5>
+                            <p class="card-text">Manage your files and folders.</p>
+                            <a href="/files" class="btn btn-primary">Go to Files</a>
+                        </div>
+                    </div>
+                </div>
+
+<hr>
+
+<h4>Security</h4>
+
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Malware Scanner</h5>
+                            <p class="card-text">Scan your website files for malicious code.</p>
+                            <a href="/malware-scanner" class="btn btn-warning"><i class="bi bi-upc-scan"></i> Scan Now</a>
+
+<button type="button" class="btn btn-secondary position-relative">
+  View Results
+  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+    99+
+    <span class="visually-hidden">suspecious files</span>
+  </span>
+</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<hr>
+
+<h4>Email Accounts</h4>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Email Accounts</h5>
+                            <p class="card-text">Manage your email accounts and settings.</p>
+                            <a href="/email" class="btn btn-primary">Go to Email</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}
