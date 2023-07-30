@@ -3,6 +3,7 @@ import pymysql
 import whois
 import datetime
 import subprocess
+import os
 
 app = Flask(__name__)
 
@@ -112,6 +113,57 @@ def get_geolocation(ip):
             return jsonify({'error': 'Invalid IP address'}), 400
     else:
         return jsonify({'error': 'Invalid API Key'}), 401
+
+
+# Function to get the country code from IP using /geolocation route
+def get_country_code_from_ip(ip):
+    try:
+        # Perform geolocation lookup using the existing code
+        result = subprocess.check_output(['geoiplookup', ip]).decode('utf-8')
+        # Extract the country code from the result (assuming it's the first two characters)
+        country_code = result.split(':')[1].strip()[:2].lower()
+        return country_code
+    except subprocess.CalledProcessError:
+        return None
+
+# Function to store the flag request information in a file
+def store_flag_request_in_file(api_key, country_code):
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    with open('flag_requests.txt', 'a') as file:
+        file.write(f"API Key: {api_key}, Country Code: {country_code}, Date: {timestamp}\n")
+
+# Route to display the flag icon for the given IP or country code
+@app.route('/flag/<ip_or_country_code>')
+def display_flag(ip_or_country_code):
+    api_key = request.headers.get('Authorization')
+    if not api_key:
+        # If API key not found in headers, check if it is provided as a query parameter
+        api_key = request.args.get('api_key')
+
+    if not api_key:
+        return jsonify({'error': 'API Key missing'}), 401
+
+    if not validate_api_key(api_key):
+        return jsonify({'error': 'Invalid API Key'}), 401
+
+    if ip_or_country_code.count('.') == 3:
+        # If the input is an IP address, get the country code from /geolocation route
+        country_code = get_country_code_from_ip(ip_or_country_code)
+        if not country_code:
+            return jsonify({'error': 'Invalid IP address'}), 400
+    else:
+        # If the input is already a country code, use it directly and convert to lowercase
+        country_code = ip_or_country_code.lower()
+
+    # Check if the flag icon file exists
+    flag_icon_path = os.path.join(app.root_path, 'static', 'flags', f'{country_code}.png')
+    if not os.path.isfile(flag_icon_path):
+        return jsonify({'error': 'Flag icon not found'}), 404
+
+    # If the API key is valid, store the flag request in the file
+    store_flag_request_in_file(api_key, country_code)
+
+    return send_file(flag_icon_path, mimetype='image/png')
 
 
 # HOME PAGE
