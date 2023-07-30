@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, g, jsonify, session, redirect, url_for, send_from_directory, send_file, flash
 import pymysql
 import whois
+import datetime
+import subprocess
 
 app = Flask(__name__)
 
@@ -33,6 +35,17 @@ def validate_api_key(api_key):
     finally:
         connection.close()
 
+# Function to store the request information in a file
+def store_request_in_file(route, api_key, domain=None, ip=None):
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    with open('requests.txt', 'a') as file:
+        if domain:
+            file.write(f"Route: {route}, Domain: {domain}, API Key: {api_key}, Date: {timestamp}\n")
+        elif ip:
+            file.write(f"Route: {route}, IP: {ip}, API Key: {api_key}, Date: {timestamp}\n")
+        else:
+            file.write(f"Route: {route}, API Key: {api_key}, Date: {timestamp}\n")
+
 
 # DOMAIN WHOIS INFO
 @app.route('/whois/<domain>')
@@ -45,6 +58,8 @@ def get_whois(domain):
     if not validate_api_key(api_key):
         return jsonify({'error': 'Invalid API Key'}), 401
 
+    # If the API key is valid, store the request in the file
+    store_request_in_file('/whois', api_key, domain=domain)
     try:
         # Perform WHOIS lookup using the python-whois library
         whois_result = whois.whois(domain)
@@ -86,6 +101,7 @@ def get_geolocation(ip):
         return jsonify({'error': 'API Key missing'}), 401
 
     if validate_api_key(api_key):
+        store_request_in_file('/geolocation', api_key, ip=ip)
         try:
             # Perform geolocation lookup using the existing code
             result = subprocess.check_output(['geoiplookup', ip]).decode('utf-8')
