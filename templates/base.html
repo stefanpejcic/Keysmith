@@ -198,8 +198,38 @@ input#light, input#dark {
     <ul class="navbar-nav">
 
     <li class="nav-item {% if current_link in current_route or (current_route == '/' and current_link == '/dashboard') %}active{% endif %}">
+        <a href="/dashboard" class="nav-link">
+           Overview
+        </a>
+        </li>
+    <li class="nav-item {% if current_link in current_route or (current_route == '/' and current_link == '/dashboard') %}active{% endif %}">
+        <a href="/endpoints" class="nav-link">
+           Endpoints <span class="badge badge-dark" style="background-color: black;">46</span>
+        </a>
+        </li>
+    <li class="nav-item {% if current_link in current_route or (current_route == '/' and current_link == '/dashboard') %}active{% endif %}">
+        <a href="/activity" class="nav-link">
+          Activity
+        </a>
+        </li>
+    <li class="nav-item {% if current_link in current_route or (current_route == '/' and current_link == '/dashboard') %}active{% endif %}">
+        <a href="/keys" class="nav-link">
+         API Keys <span class="badge badge-dark" style="background-color: black;">4</span>
+        </a>
+        </li>
+        <li class="nav-item {% if current_link in current_route or (current_route == '/' and current_link == '/dashboard') %}active{% endif %}">
         <a href="/API" class="nav-link">
-            <i class="bi bi-bell"></i> API <span class="badge badge-dark" style="background-color: black;">4</span>
+        Usage
+        </a>
+        </li>
+        <li class="nav-item {% if current_link in current_route or (current_route == '/' and current_link == '/dashboard') %}active{% endif %}">
+        <a href="/monitoring" class="nav-link">
+            Monitoring
+        </a>
+        </li>
+        <li class="nav-item {% if current_link in current_route or (current_route == '/' and current_link == '/dashboard') %}active{% endif %}">
+        <a href="/settings" class="nav-link">
+             Settings
         </a>
         </li>
     </ul>
