@@ -1,5 +1,6 @@
-from flask import Flask, jsonify, request
+from flask import Flask, render_template, request, g, jsonify, session, redirect, url_for, send_from_directory, send_file, flash
 import pymysql
+import whois
 
 app = Flask(__name__)
 
@@ -33,6 +34,39 @@ def validate_api_key(api_key):
         connection.close()
 
 
+@app.route('/whois/<domain>')
+def get_whois(domain):
+    api_key = request.headers.get('Authorization')
+
+    if not api_key:
+        return jsonify({'error': 'API Key missing'}), 401
+
+    if not validate_api_key(api_key):
+        return jsonify({'error': 'Invalid API Key'}), 401
+
+    try:
+        # Perform WHOIS lookup using the python-whois library
+        whois_result = whois.whois(domain)
+
+        # Check if the domain exists in WHOIS data
+        if whois_result.domain_name:
+            # Convert the WHOIS data to a dictionary for JSON serialization
+            whois_data = whois_result.__dict__
+
+            # Remove the raw WHOIS data (it contains binary data, causing JSON serialization issues)
+            whois_data.pop('_raw', None)
+
+            return jsonify(whois_data), 200
+        else:
+            return jsonify({'error': 'Domain not found in WHOIS data'}), 404
+
+    except whois.exceptions.UnknownTld as e:
+        return jsonify({'error': 'Unknown top-level domain'}), 400
+    except Exception as e:
+        return jsonify({'error': 'Error occurred during WHOIS lookup'}), 500
+
+
+
 @app.route('/geolocation/<ip>')
 def get_geolocation(ip):
     api_key = request.headers.get('Authorization')
@@ -51,6 +85,25 @@ def get_geolocation(ip):
             return jsonify({'error': 'Invalid IP address'}), 400
     else:
         return jsonify({'error': 'Invalid API Key'}), 401
+
+
+# HOME PAGE
+@app.route('/')
+def home():
+    return render_template('dashboard.html')
+
+# HOME PAGE
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+
+# LOGOUT LINK
+
+@app.route('/logout')
+def logout():
+    session.clear()  # Clear the session data
+    return redirect(url_for('login'))
 
 
 if __name__ == '__main__':
