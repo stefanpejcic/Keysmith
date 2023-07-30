@@ -34,6 +34,7 @@ def validate_api_key(api_key):
         connection.close()
 
 
+# DOMAIN WHOIS INFO
 @app.route('/whois/<domain>')
 def get_whois(domain):
     api_key = request.headers.get('Authorization')
@@ -50,13 +51,23 @@ def get_whois(domain):
 
         # Check if the domain exists in WHOIS data
         if whois_result.domain_name:
-            # Convert the WHOIS data to a dictionary for JSON serialization
-            whois_data = whois_result.__dict__
+            # Extract relevant information from the WHOIS data
+            data = {
+                'domain_name': whois_result.domain_name,
+                'registrar': whois_result.registrar,
+                'creation_date': whois_result.creation_date.strftime('%Y-%m-%d %H:%M:%S') if whois_result.creation_date else None,
+                'expiration_date': whois_result.expiration_date.strftime('%Y-%m-%d %H:%M:%S') if whois_result.expiration_date else None,
+                'name_servers': whois_result.name_servers,
+                'status': whois_result.status,
+                'dnssec': whois_result.dnssec,
+                'last_update': whois_result.last_updated.strftime('%Y-%m-%d %H:%M:%S') if whois_result.last_updated else None,
+                'update_date': whois_result.updated_date[0].strftime('%Y-%m-%d %H:%M:%S') if whois_result.updated_date else None,
+            }
 
-            # Remove the raw WHOIS data (it contains binary data, causing JSON serialization issues)
-            whois_data.pop('_raw', None)
+            # Add the raw WHOIS data to the response
+            data['whois_raw_data'] = whois_result.text
 
-            return jsonify(whois_data), 200
+            return jsonify(data), 200
         else:
             return jsonify({'error': 'Domain not found in WHOIS data'}), 404
 
@@ -66,7 +77,7 @@ def get_whois(domain):
         return jsonify({'error': 'Error occurred during WHOIS lookup'}), 500
 
 
-
+# GEOIPLOCATION
 @app.route('/geolocation/<ip>')
 def get_geolocation(ip):
     api_key = request.headers.get('Authorization')
@@ -92,14 +103,13 @@ def get_geolocation(ip):
 def home():
     return render_template('dashboard.html')
 
-# HOME PAGE
+# DASH
 @app.route('/dashboard')
 def dashboard():
     return render_template('dashboard.html')
 
 
 # LOGOUT LINK
-
 @app.route('/logout')
 def logout():
     session.clear()  # Clear the session data
