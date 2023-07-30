@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Keysmith</title
+	<!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <style>
+
+        .header {
+            padding: 10px;
+            top: 0;
+            z-index: 999;
+        }
+
+        .header-logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+.sticky {
+position: sticky;
+    top: 0px;
+    z-index: 999;
+}
+        .header-user {
+            margin-left: 10px;
+        }
+
+        .header-links {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .header-links a {
+            color: #212529;
+            text-decoration: none;
+        }
+
+        .header-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 10px;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+		
+        .podmeni, .theme_toggle {
+    display: block;
+    width: 100%;
+    padding: var(--bs-dropdown-item-padding-y) var(--bs-dropdown-item-padding-x);
+        }
+        .podmeni:hover {
+            background: whitesmoke;
+        }
+
+input#light, input#dark {
+    display:none;
+}
+
+
+		li.nav-item:hover {
+    background: white;
+    border-radius: 10px;
+		}
+		
+		li.nav-item.active {
+		    background: navajowhite;
+    border-radius: 10px;
+		}
+		
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="header-logo"><a style="text-decoration: none; color: inherit;" href="{{ url_for('dashboard') }}">Keysmith</a></span>
+                    <span class="header-user">{{ g.panel_version }}</span>
+					<!--small>Select a website</small-->
+<select class="form-select" style="width:auto; display:inline-block;" aria-label=".form-select-lg example" onchange="redirectToWebsite(this.value)">
+    <option value="" selected hidden>Select a website</option>
+    <option value="/website/add-new">+ Add Website</option>
+    {% for container in containers %}
+        {% if container.domain_url == request.args.get('domain') %}
+            <option value="{{ container.domain_url }}" selected>{{ container.domain_url }}</option>
+        {% else %}
+            <option value="{{ container.domain_url }}">{{ container.domain_url }}</option>
+        {% endif %}
+    {% endfor %}
+</select>
+ <script>
+    function redirectToWebsite(url) {
+        if (url === "") return;
+        location.href = '/website?domain=' + encodeURIComponent(url);
+    }
+</script>
+               </div>
+                <div class="col-md-6 header-links">
+                    <a href="#" style="margin-left: 10px;">Feedback</a>
+                    <a href="#" style="margin-left: 10px;">Help</a>
+                    <a href="#" style="margin-left: 10px;">Docs</a>
+                    <a href="#" style="margin-left: 10px;border:1px solid grey;border-radius:15px;border: 1px solid #dee2e6; border-radius: 15px;  padding: 2px 6px;">
+                        <i class="bi bi-bell"></i> <span class="badge badge-warning" style="border-radius:15px;background:black;">2</span>
+                    </a>
+					    {% set gravatar_size = 15 %}
+<div class="dropdown">
+  <a class="dropdown-toggle" id="Account" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<img src="{{ gravatar_image_url }}" alt="Gravatar" width="{{ gravatar_size }}" class="header-avatar" height="{{ gravatar_size }}" style="border-radius: 50%; margin-left: 25px; margin-right:5px; cursor: pointer;"></img> <b style="cursor: pointer;">{{ current_username }}</b>    </a>
+  <div class="dropdown-menu" style="width: max-content;" aria-labelledby="Account">
+    <a class="podmeni" type="button" class="disabled">{{ email }}</a>
+    <a href="/dashboard" class="podmeni" type="button">Dashboard</a>
+    <a href="/account" class="podmeni" type="button">Settings</a>
+    <a href="/teams" class="podmeni" type="button">Teams</a>
+    <div class="dropdown-divider"></div>
+    <a href="#commands_modal" class="podmeni">Command Menu <span style="border: 1px solid grey;border-radius:5px">&nbsp; Ctrl &nbsp;</span><i class="bi bi-plus"></i><span style="border: 1px solid grey;border-radius:5px">&nbsp; K &nbsp;</span></a>
+    <div class="dropdown-divider"></div>
+
+    <span class="theme_toggle">Theme 
+<div class="btn-group btn-group-toggle" data-toggle="buttons">
+  <label class="btn btn-white active">
+    <input type="radio" name="options" id="light" autocomplete="off" checked> <i class="bi bi-lightbulb-fill"></i> Light
+  </label>
+  <label class="btn btn-dark">
+    <input type="radio" name="options" id="dark" autocomplete="off"> <i class="bi bi-lightbulb"></i> Dark
+  </label>
+</div>
+</span>
+    </a>
+    <div class="dropdown-divider"></div>
+    <a class="podmeni" type="button">Homepage <i class="bi bi-box-arrow-up-right"></i></a>
+    <a class="podmeni" type="button" href="{{ url_for('logout') }}">Logout <i class="bi bi-box-arrow-right" style=""></i></a>
+    <div class="dropdown-divider"></div>
+    <a href="/upgrade" class="podmeni btn btn-dark" style="border-radius: 0px; width:100%; background:black; color:white;">Upgrade to Pro</a>
+    
+  </div>
+</div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to handle the sticky behavior
+        function handleStickyNavbar() {
+            var navbar = document.querySelector('.sticky-navbar');
+            var logo = document.querySelector('.logo');
+            var sticky = 100; // Set the number of pixels to trigger the logo visibility change
+
+            if (window.pageYOffset >= sticky) {
+                navbar.classList.add('sticky');
+                logo.style.display = 'inline-block';
+            } else {
+                navbar.classList.remove('sticky');
+                logo.style.display = 'none';
+            }
+        }
+
+        // Add event listener for scroll event
+        window.addEventListener('scroll', handleStickyNavbar);
+    </script>
+                <div class="col-md-12">
+    <div class="navbar navbar-expand-lg navbar-light bg-light sticky-navbar">
+        <a class="navbar-brand logo" style="display: none;" href="/">
+            <img src="/docs/4.0/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+        </a>
+        <div class="container">
+  <button class="navbar-toggler" type="button" style="border-bottom: 1px solid lightgrey;" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    <ul class="navbar-nav">
+
+    <li class="nav-item {% if current_link in current_route or (current_route == '/' and current_link == '/dashboard') %}active{% endif %}">
+        <a href="/API" class="nav-link">
+            <i class="bi bi-bell"></i> API <span class="badge badge-dark" style="background-color: black;">4</span>
+        </a>
+        </li>
+    </ul>
+	            </div>
+
+  </div>
+</nav>				
+            </div>
+
+    <div class="content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+<footer class="footer mt-auto py-3 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+{{ current_year }} 
+      </div>
+      <div class="col-md-4 d-flex justify-content-center">
+        <ul class="list-inline mb-0">
+          <li class="list-inline-item"><a href="#">Documentation</a></li>
+          <li class="list-inline-item"><a href="#">Support Forums</a></li>
+          <li class="list-inline-item"><a href="#">Trademarks</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4 text-md-right">
+        <p class="mb-0" style="text-align: right;">Keysmith Version: <b>{{ g.panel_version }}</b></p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
